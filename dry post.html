@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { 
+            font-family: 'outfit', sans-serif; 
+            background: #f2f1e8; 
+            margin: 0; 
+            padding: 20px; 
+            height: 100vh; 
+            box-sizing: border-box;
+            display: flex; 
+            font-size: 32px; /* Enforced base size */
+        }
+        
+        .quiz-container { 
+            flex: 1; 
+            background: white; 
+            padding: 40px; 
+            border-radius: 16px; 
+            border-left: 8px solid #724b9e; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1); 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        h2 { color: #724b9e; font-size: 38px; margin: 0 0 20px 0; }
+        code { background: #f8fafc; padding: 10px; border-radius: 4px; font-family: 'courier new', monospace; font-size: 32px; display: block; margin: 20px 0; }
+        
+        .options { display: grid; gap: 15px; }
+        button { 
+            padding: 15px; 
+            font-size: 32px; 
+            border: 2px solid #724b9e; 
+            background: white; 
+            cursor: pointer; 
+            border-radius: 8px; 
+            transition: 0.2s; 
+            font-weight: 600; 
+            text-align: left; 
+        }
+        
+        button:hover { background: #f0eaf9; }
+        button.correct { background: #eaf5ec; border-color: #10b981; }
+        button.wrong { background: #fdf0f3; border-color: #e11d48; }
+        
+        #feedback-area { margin-top: 20px; text-align: center; }
+        #feedback-text { font-size: 32px; font-weight: 700; height: 40px; }
+        #explanation { font-size: 30px; color: #475569; margin-top: 10px; font-style: italic; }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container" id="quiz">
+    <div id="question-area">
+        <h2 id="q-text">Loading...</h2>
+        <code id="q-code"></code>
+        <div class="options" id="options"></div>
+        <div id="feedback-area">
+            <div id="feedback-text"></div>
+            <div id="explanation"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        {
+            q: "Which type of error does python detect and report automatically?",
+            code: "",
+            o: ["a) Logical error", "b) Syntax error", "c) Both logical and syntax errors", "d) Neither — the programmer must find all errors manually"],
+            correct: 1,
+            exp: "Syntax errors are detected by the python interpreter before the program executes."
+        },
+        {
+            q: "A program runs without any error message but prints the wrong output. Which type of error is this?",
+            code: "",
+            o: ["a) Syntax error", "b) Runtime error", "c) Logical error", "d) Indentation error"],
+            correct: 2,
+            exp: "Logical errors occur when the program runs but does not produce the expected results."
+        },
+        {
+            q: "What is the purpose of a dry run?",
+            code: "",
+            o: ["a) To run a program faster on the computer", "b) To trace program execution line by line and record variable values manually", "c) To check whether the program has syntax errors", "d) To print all variable values automatically"],
+            correct: 1,
+            exp: "A dry run is a mental or manual tracing of the code to understand its logic and debug errors."
+        },
+        {
+            q: "A programmer writes total = i inside a for loop instead of total += i. What kind of error is this?",
+            code: "",
+            o: ["a) Syntax error", "b) Runtime error", "c) Logical error", "d) Indentation error"],
+            correct: 2,
+            exp: "This is a logical error because the code is syntactically correct but performs the wrong operation."
+        },
+        {
+            q: "In a dry run table, when is the output column filled in?",
+            code: "",
+            o: ["a) After every statement executes", "b) Only when a variable changes value", "c) Only when a print() statement executes", "d) Only at the end of the program"],
+            correct: 2,
+            exp: "The output column is only updated when the program reaches a print statement."
+        }
+    ];
+
+    let currentq = 0;
+
+    function loadq() {
+        const data = questions[currentq];
+        document.getElementById('q-text').innerText = (currentq + 1) + ". " + data.q;
+        document.getElementById('q-code').innerText = data.code;
+        document.getElementById('feedback-text').innerText = "";
+        document.getElementById('explanation').innerText = "";
+        const optdiv = document.getElementById('options');
+        optdiv.innerHTML = '';
+        data.o.forEach((opt, i) => {
+            let btn = document.createElement('button');
+            btn.innerText = opt;
+            btn.onclick = function() { check(i, this); };
+            optdiv.appendChild(btn);
+        });
+    }
+
+    function check(idx, btn) {
+        const data = questions[currentq];
+        const feedback = document.getElementById('feedback-text');
+        const explanation = document.getElementById('explanation');
+        
+        if(idx === data.correct) {
+            btn.className = 'correct';
+            feedback.innerText = "Correct!";
+            feedback.style.color = "#10b981";
+        } else {
+            btn.className = 'wrong';
+            feedback.innerText = "Incorrect.";
+            feedback.style.color = "#e11d48";
+        }
+        
+        explanation.innerText = data.exp;
+        document.querySelectorAll('.options button').forEach(b => b.disabled = true);
+        
+        setTimeout(function() {
+            currentq++;
+            if(currentq < questions.length) {
+                loadq();
+            } else {
+                document.getElementById('quiz').innerHTML = "<h2>Quiz complete!</h2>";
+            }
+        }, 3000);
+    }
+
+    loadq();
+</script>
+</body>
+</html>
